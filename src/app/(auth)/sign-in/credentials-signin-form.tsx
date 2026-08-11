@@ -5,10 +5,28 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { signInDefaultValues } from '@/lib/constants';
 import Link from 'next/link';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
+import { signInWithCredentials } from '@/lib/actions/user.actions';
+
+const SignInButton = () => {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button className="w-full py-4.5 cursor-pointer" variant="default">
+      {pending ? 'Signing In..' : 'Sign In'}
+    </Button>
+  );
+};
 
 const CredentialsSignInForm = () => {
+  const [data, action] = useActionState(signInWithCredentials, {
+    success: false,
+    message: '',
+  });
+
   return (
-    <form>
+    <form action={action}>
       <div className="space-y-6">
         <div>
           <Label htmlFor="email" className="mb-2">
@@ -37,13 +55,20 @@ const CredentialsSignInForm = () => {
           />
         </div>
         <div>
-          <Button className="w-full" variant="default">
-            Sign In
-          </Button>
+          <SignInButton />
         </div>
+
+        {data && !data.success && (
+          <div className="text-center text-red-400">{data.message}</div>
+        )}
+
         <div className="text-sm text-center text-muted-foreground">
           Don&apos;t have an account?{' '}
-          <Link href="sign-up" target="_self" className="text-primary hover:underline">
+          <Link
+            href="sign-up"
+            target="_self"
+            className="text-primary hover:underline"
+          >
             Sign Up
           </Link>
         </div>
