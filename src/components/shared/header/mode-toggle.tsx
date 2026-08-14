@@ -31,7 +31,7 @@ const ModeToggle = () => {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="px-3.5 py-5 focus-visible:ring-0 focus-visible:ring-offset-0 outline-none"
+          className="px-3.5 py-5 focus-visible:ring-0 focus-visible:ring-offset-0 outline-none  cursor-pointer"
           aria-label="Toggle theme"
           disabled={!mounted}
         >

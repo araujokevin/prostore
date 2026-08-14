@@ -4,7 +4,11 @@ import { signOutUser } from '@/lib/actions/user.actions';
 const SignOutForm = () => {
   return (
     <form action={signOutUser} className="w-full">
-      <Button type="submit" className="w-full justify-start" variant="ghost">
+      <Button
+        type="submit"
+        className="w-full justify-start cursor-pointer"
+        variant="ghost"
+      >
         Sign Out
       </Button>
     </form>
