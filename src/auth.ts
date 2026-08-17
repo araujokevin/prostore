@@ -41,10 +41,10 @@ export const config = {
           // If password is correct, return user
           if (isMatch) {
             return {
-              id: user?.id,
-              name: user?.name,
-              email: user?.email,
-              role: user?.role,
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              role: user.role,
             };
           }
         }
@@ -56,17 +56,36 @@ export const config = {
   ],
 
   callbacks: {
-    async session({ session, user, trigger, token }) {
-      // Set the user ID from the token
-      if (token.sub) {
+    async session({ session, token, trigger }: any) {
+      // Add custom JWT fields to the session
+      if (session.user) {
         session.user.id = token.sub;
+        session.user.role = token.role;
+        session.user.name = token.name;
       }
 
-      // If there is an update, set the user name
-      if (trigger === 'update') {
-        session.user.name = user.name;
-      }
       return session;
+    },
+
+    async jwt({ token, user }: any) {
+      // Runs during sign in
+      if (user) {
+        token.role = user.role;
+
+        // If the user has no name, use the email username
+        if (user.name === 'NO_NAME' && user.email) {
+          token.name = user.email.split('@')[0];
+
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { name: token.name },
+          });
+        } else {
+          token.name = user.name;
+        }
+      }
+
+      return token;
     },
   },
 } satisfies NextAuthConfig;
